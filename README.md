@@ -2,9 +2,12 @@
 The simplest library to hold 2- and 3-dimensional vectors with some math operations
 
 ------------
-#### Creating a vector
+#### Initializing the library
 ```lua
 local vec = require("vec")
+```
+#### Creating a vector
+```lua
 print(vec.new(12, 12))
 --result: (12, 12)
 ```
