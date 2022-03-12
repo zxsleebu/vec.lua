@@ -2,46 +2,33 @@ local vec = {}
 vec.__index = vec
 vec.new = function(x, y, z)
     return setmetatable({ x = x, y = y, z = z }, vec) end
-vec.check3 = function(a, b)
-    return a.z ~= nil and b.z ~= nil end
-vec.__add = function(a, b)
-    return vec.check3(a, b)
-    and vec.new(a.x+b.x, a.y+b.y, a.z+b.z)
-    or vec.new(a.x+b.x, a.y+b.y)
-end
-vec.__sub = function(a, b)
-    return vec.check3(a, b)
-    and vec.new(a.x-b.x, a.y-b.y, a.z-b.z)
-    or vec.new(a.x-b.x, a.y-b.y)
-end
+local operation = function(a, b, f)
+    local z = nil if a.z ~= nil and b.z ~= nil then z = f(a.z, b.z) end
+    return vec.new(f(a.x, b.x), f(a.y, b.y), z) end
+vec.__add = function(a,b)
+    return operation(a,b, function(c,d) return c+d end) end
+vec.__sub = function(a,b)
+    return operation(a,b, function(c,d) return c-d end) end
 vec.__mul = function(a, b)
     if getmetatable(b) == vec then
-        return vec.check3(a, b)
-        and vec.new(a.x*b.x, a.y*b.y, a.z*b.z)
-        or vec.new(a.x*b.x, a.y*b.y) end
+        return operation(a,b, function(c,d) return c*d end) end
     if type(b) == "number" then
-        return vec.check3(a, b)
-        and vec.new(a.x*b, a.y*b, a.z*b)
-        or vec.new(a.x*b, a.y*b) end
+        local z = nil if a.z ~= nil then z = a.z*b end
+        return vec.new(a.x*b, a.y*b, z) end
 end
 vec.__div = function(a, b)
     if getmetatable(b) == vec then
-        return vec.check3(a, b)
-        and vec.new(a.x/b.x, a.y/b.y, a.z/b.z)
-        or vec.new(a.x/b.x, a.y/b.y) end
+        return operation(a,b, function(a,b) return a/b end) end
     if type(b) == "number" then
-        return vec.check3(a, b)
-        and vec.new(a.x/b, a.y/b, a.z/b)
-        or vec.new(a.x/b, a.y/b) end
+        local z = nil if a.z ~= nil then z = a.z/b end
+        return vec.new(a.x/b, a.y/b, z) end
 end
 vec.__unm = function(a)
-    return a ~= nil
-    and vec.new(-a.x, -a.x, -a.z)
-    or vec.new(-a.x, -a.x)
-end
+    local z if a.z ~= nil then z = -a.z end
+    return vec.new(-a.x, -a.y, z) end
 vec.__eq = function(a, b)
     return a.x == b.x and a.y == b.y and a.z == b.z end
 vec.__tostring = function(a)
-    local z = a.z ~= nil and (", " .. a.z) or ""
+    local z = a.z ~= nil and ", " .. a.z or ""
     return "("..a.x..", "..a.y..z..")" end
 return vec
