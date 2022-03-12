@@ -3,11 +3,11 @@ vec.__index = vec
 vec.new = function(x, y, z)
     return setmetatable({ x = x, y = y, z = z }, vec) end
 local operation = function(a, b, f)
-    local z = nil if a.z ~= nil and b.z ~= nil then z = f(a.z, b.z) end
+    local z = nil if a.z~=nil and b.z~=nil then z = f(a.z, b.z) end
     return vec.new(f(a.x, b.x), f(a.y, b.y), z) end
-vec.__add = function(a,b)
+vec.__add = function(a, b)
     return operation(a,b, function(c,d) return c+d end) end
-vec.__sub = function(a,b)
+vec.__sub = function(a, b)
     return operation(a,b, function(c,d) return c-d end) end
 vec.__mul = function(a, b)
     if getmetatable(b) == vec then
@@ -18,7 +18,7 @@ vec.__mul = function(a, b)
 end
 vec.__div = function(a, b)
     if getmetatable(b) == vec then
-        return operation(a,b, function(a,b) return a/b end) end
+        return operation(a,b, function(c,d) return c/d end) end
     if type(b) == "number" then
         local z = nil if a.z ~= nil then z = a.z/b end
         return vec.new(a.x/b, a.y/b, z) end
